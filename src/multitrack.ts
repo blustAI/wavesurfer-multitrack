@@ -113,8 +113,8 @@ class MultiTrack extends EventEmitter<MultitrackEvents> {
 
     this.rendering = initRendering(this.tracks, this.options)
 
-    this.rendering.addDropHandler((trackId: TrackId) => {
-      this.emit('drop', { id: trackId })
+    this.rendering.addDropHandler((trackId: TrackId, e: Event) => {
+      this.emit('drop', { id: trackId, e})
     })
 
     this.initAllAudios().then((durations) => {
@@ -707,13 +707,13 @@ function initRendering(tracks: MultitrackTracks, options: MultitrackOptions) {
     },
 
     // Do something on drop
-    addDropHandler: (onDrop: (trackId: TrackId) => void) => {
+    addDropHandler: (onDrop: (trackId: TrackId, e: Event) => void) => {
       tracks.forEach((track, index) => {
         if (!(track.url || track.options?.media)) {
           const droppable = containers[index].querySelector('div')
           droppable?.addEventListener('drop', (e) => {
             e.preventDefault()
-            onDrop(track.id)
+            onDrop(track.id,e)
           })
         }
       })
